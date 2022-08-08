@@ -35,10 +35,10 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-    await ctx.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду !task')
+    await ctx.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду !access')
 
 @bot.command()
-async def task(ctx, *args):
+async def access(ctx, *args):
     global user, quest
     if user.get_data(ctx.author.id) and not user.get_data(ctx.author.id)[0][2] == 0:
         cur_user = user.get_data(ctx.author.id)
@@ -57,8 +57,8 @@ async def answer(ctx, *args):
     if not args == ():
         role = discord.utils.get(ctx.author.guild.roles, name=simple_role)
         if args[0] == quest_answers.get(user.get_data(ctx.author.id)[0][2]):
-            await ctx.author.add_roles(role)
             await ctx.message.delete()
+            await ctx.author.add_roles(role)
             await ctx.send(f"{ctx.author.mention}, роль выдана!")
         else:
             await ctx.message.delete()
