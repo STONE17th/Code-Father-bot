@@ -8,7 +8,7 @@ import data_base
 bot = commands.Bot(command_prefix='!', Intents=discord.Intents.all)
 bot.remove_command('help')
 user = data_base.DataBase('disbot.db')
-simple_role = 'test'
+simple_role = 'GeekBrains'
 
 quest = {
     1: 'a = "Python"\nb = "Love"\nres = (a + b) * 2\nprint(res)\n\n перед ответом напишите команду !answer',
@@ -40,7 +40,8 @@ async def help(ctx):
 @bot.command()
 async def task(ctx, *args):
     global user, quest
-    if cur_user := user.get_data(ctx.author.id) and not user.get_data(ctx.author.id)[0][2] == 0:
+    if user.get_data(ctx.author.id) and not user.get_data(ctx.author.id)[0][2] == 0:
+        cur_user = user.get_data(ctx.author.id)
         task = cur_user[0][2]
         await ctx.send(f"{ctx.author.mention}, {quest.get(task)}")
     else:
@@ -51,16 +52,17 @@ async def task(ctx, *args):
         user.update_item(task, ctx.author.id)
 
 @bot.command()
-async def answer(ctx, arg: str, *args):
+async def answer(ctx, *args):
     global user, quest_answers, simple_role
-    role = discord.utils.get(ctx.author.guild.roles, name=simple_role)
-    if arg == quest_answers.get(user.get_data(ctx.author.id)[0][2]):
-        await ctx.author.add_roles(role)
-        await ctx.send(f"{ctx.author.mention}, роль выдана!")
-    else:
-        await ctx.send(f"{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль")
-    await ctx.message.delete()
-
+    if not args == ():
+        role = discord.utils.get(ctx.author.guild.roles, name=simple_role)
+        if args[0] == quest_answers.get(user.get_data(ctx.author.id)[0][2]):
+            await ctx.author.add_roles(role)
+            await ctx.message.delete()
+            await ctx.send(f"{ctx.author.mention}, роль выдана!")
+        else:
+            await ctx.message.delete()
+            await ctx.send(f"{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль")
 
 bot.run(os.getenv('TOKEN'))
 
