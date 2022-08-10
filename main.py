@@ -23,7 +23,7 @@ async def on_ready():
     global quests, quests_id
     print('On start')
     dbase = data_base.DataBase(
-        mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='glt.ekolenko.ru'))
+        mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
     if dbase:
         print('DB Connected... OK')
         quests = dbase.get_quest('quest_list')
