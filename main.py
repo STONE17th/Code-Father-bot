@@ -10,9 +10,9 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
 base = quests = quests_id = None
 
-one_level_role = 1006203836463071325
-guild_id = 761885493394407435
-start_channel = 1006350953848512605
+one_level_role =1000730137731551382
+guild_id = 996841246016417962
+start_channel = 1006321073958166548
 
 status = '/info'
 task_string = f'что выведет в консоль этот код:\n'
