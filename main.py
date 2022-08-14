@@ -69,12 +69,12 @@ async def info(ctx):
     await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
-async def status(ctx, user_name: str, stat):
+async def status(ctx, stat_name: str, stat):
     global dbase
     if await check_status(ctx):
-        dbase.update_item('set_status', user_name[2:-1], stat)
+        dbase.update_item('set_status', stat_name[2:-1], stat)
         await ctx.send(
-            f'Пользователь {user_name} теперь {stat}')
+            f'Пользователь {stat_name} теперь {stat}')
     else:
         await ctx.send(f'Эта команда для вас недоступна')
 
