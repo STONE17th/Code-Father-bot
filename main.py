@@ -131,6 +131,7 @@ async def access(ctx, *args):
 @bot.command()
 async def answer(ctx, *args):
     global dbase, quest_answers, simple_role
+    await check_user(ctx)
     if not args == ():
         guild = bot.get_guild(guild_id)
         role = guild.get_role(one_level_role)
