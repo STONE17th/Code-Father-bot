@@ -50,6 +50,14 @@ def new_user(member):
     new_user = ((str(member.id), member.name, task))
     dbase.add_item(new_user, 'new_user')
 
+def check_status(ctx):
+    global dbase
+    user_status = dbase.get_user('status', ctx.author.id)
+    await delete_message(ctx)
+    if user_status[0] == 'admin': return True
+    else: return False
+
+
 async def delete_message(ctx):
     try:
         await ctx.message.delete()
@@ -61,18 +69,26 @@ async def info(ctx):
     await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
+async def status(ctx, user_name, stat):
+    global dbase
+    if check_status(ctx):
+        dbase.update_item('set_status', user_name, stat)
+        await ctx.send(
+            f'Пользователь {ctx.author.name} теперь Админ ')
+    else:
+        await ctx.send(f'Эта команда для вас недоступна')
+
+@bot.command()
 async def embed(ctx, title, *args):
     global dbase
-    user_status = dbase.get_user('status', ctx.author.id)
-    await delete_message(ctx)
     text = ''
     for word in args:
         text += word + ' '
-    if user_status[0] == 'admin':
+    if check_status(ctx):
         embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
-        await ctx.send(f'Ваш статус - {user_status}, только пользователи со статусом admin могут отправлять EMBED сообщения')
+        await ctx.send(f'Эта команда для вас недоступна')
 
 
 @bot.command()
