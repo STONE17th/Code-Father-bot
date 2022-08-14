@@ -68,7 +68,7 @@ class DataBase():
     def delete_item(self, id, list_select: str):
         match list_select:
             case 'user_list':
-                self.cur.execute(f'DELETE FROM {list_select} WHERE id_user = {id}')
+                self.cur.execute(f'DELETE FROM {list_select} WHERE dis_user_id = {id}')
             case 'quest_list':
-                self.cur.execute(f'DELETE FROM {list_select} WHERE id_quest = {id}')
+                self.cur.execute(f'DELETE FROM {list_select} WHERE quest_id = {id}')
         self.base.commit()
