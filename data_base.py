@@ -42,7 +42,9 @@ class DataBase():
             case 'quest_answer':
                 self.cur.execute(f'SELECT answer FROM quest_list WHERE quest_id = {args[0]}')
                 return [elem for elem in self.cur][0]
-
+            case 'set_quest':
+                self.cur.execute(f'UPDATE user_list SET task = {args[1]} WHERE dis_user_id = {args[0]}')
+                return [elem for elem in self.cur][0]
 
     def add_item(self, new_item, list_select: str):
         match list_select:

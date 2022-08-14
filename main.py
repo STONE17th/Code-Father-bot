@@ -61,6 +61,11 @@ async def info(ctx):
     await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
+async def access_user_task(ctx, *args):
+    global dbase
+    dbase.get_quest('set_quest', ctx.author.id, args[0])
+
+@bot.command()
 async def access(ctx, *args):
     global dbase, one_level_role
     guild = bot.get_guild(guild_id)
@@ -102,4 +107,4 @@ async def game_info():
         await asyncio.sleep(15)
 
 bot.loop.create_task(game_info())
-bot.run('MTAwNjgxODg2MzkwMTU4OTU4Ng.GsCz2H.rC0pPFP5F35nSMz3-xT6-hYsY6PEuIUvQKNC4I')
+bot.run(os.getenv('TOKEN'))
