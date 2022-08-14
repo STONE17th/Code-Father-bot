@@ -72,7 +72,7 @@ async def info(ctx):
 async def status(ctx, user_name: str, stat):
     global dbase
     print(user_name[1:-1])
-    if check_status(ctx):
+    if await check_status(ctx):
         dbase.update_item('set_status', user_name[2:-1], stat)
         await ctx.send(
             f'Пользователь {ctx.author.name} теперь Админ ')
@@ -85,7 +85,7 @@ async def embed(ctx, title, *args):
     text = ''
     for word in args:
         text += word + ' '
-    if check_status(ctx):
+    if await check_status(ctx):
         embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
