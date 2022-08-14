@@ -84,7 +84,9 @@ async def answer(ctx, *args):
         role = guild.get_role(one_level_role)
         member = guild.get_member(ctx.message.author.id)
         task_id = dbase.get_user('user_task', ctx.author.id)
-        if args[0] == dbase.get_quest('quest_answer', task_id[0])[0]:
+        print(args[0])
+        print(dbase.get_quest('quest_answer', task_id[0])[0])
+        if str(args[0]) == str(dbase.get_quest('quest_answer', task_id[0])[0]):
             await delete_message(ctx)
             await member.add_roles(role)
             await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня!")
@@ -100,4 +102,4 @@ async def game_info():
         await asyncio.sleep(15)
 
 bot.loop.create_task(game_info())
-bot.run(os.getenv('TOKEN'))
+bot.run('MTAwNjgxODg2MzkwMTU4OTU4Ng.GsCz2H.rC0pPFP5F35nSMz3-xT6-hYsY6PEuIUvQKNC4I')
