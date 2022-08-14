@@ -82,7 +82,7 @@ async def status(ctx, stat_name: str, stat):
 async def set_task(ctx, stat_name: str, stat):
     global dbase
     if await check_status(ctx):
-        dbase.update_item('set_status', stat_name[2:-1], stat)
+        dbase.update_item('set_task', stat_name[2:-1], stat)
         await ctx.send(
             f'У пользователя {stat_name} теперь {stat} задача')
     else:
