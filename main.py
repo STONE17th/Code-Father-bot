@@ -74,7 +74,7 @@ async def status(ctx, user_name: str, stat):
     if await check_status(ctx):
         dbase.update_item('set_status', user_name[2:-1], stat)
         await ctx.send(
-            f'Пользователь {ctx.author.name} теперь Админ ')
+            f'Пользователь {user_name} теперь {stat}')
     else:
         await ctx.send(f'Эта команда для вас недоступна')
 
