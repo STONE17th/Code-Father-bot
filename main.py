@@ -120,7 +120,7 @@ async def access(ctx, *args):
             await ctx.send(f"У вас уже есть такая роль")
             break
     else:
-        cur_user = dbase.get_user('list', ctx.author.id)
+        cur_user = dbase.get_user('user', ctx.author.id)
         cur_quest = dbase.get_quest('task', cur_user[0][2])
         await ctx.send(f'{ctx.author.mention}, {task_string}{cur_quest[0]}{answer_string}')
 
