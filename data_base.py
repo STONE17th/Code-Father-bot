@@ -62,6 +62,8 @@ class DataBase():
             case 'set_task':
                 self.cur.execute(f'UPDATE user_list SET task = {task} WHERE dis_user_id = {user_id}')
             case 'set_status':
+                print(user_id)
+                print(task)
                 self.cur.execute(f'UPDATE user_list SET user_status = {task} WHERE dis_user_id = {user_id}')
         self.base.commit()
 
