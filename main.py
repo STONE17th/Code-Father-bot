@@ -79,6 +79,16 @@ async def status(ctx, stat_name: str, stat):
         await ctx.send(f'Эта команда для вас недоступна')
 
 @bot.command()
+async def set_task(ctx, stat_name: str, stat):
+    global dbase
+    if await check_status(ctx):
+        dbase.update_item('set_status', stat_name[2:-1], stat)
+        await ctx.send(
+            f'У пользователя {stat_name} теперь {stat} задача')
+    else:
+        await ctx.send(f'Эта команда для вас недоступна')
+
+@bot.command()
 async def embed(ctx, title, *args):
     global dbase
     text = ''
