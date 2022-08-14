@@ -26,8 +26,8 @@ async def on_ready():
         mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
     if dbase:
         print('DB Connected... OK')
-        quests = dbase.get_quest('quest_list')
-        quests_id = dbase.get_quest('quest_id')
+        quests = dbase.get_quest('list')
+        quests_id = dbase.get_quest('id')
 
 # [print(task[1]) for task in quests]
 # print(random.choice(quests_id))
@@ -48,7 +48,7 @@ def new_user(member):
     global quests_id
     task = random.choice(quests_id)
     new_user = ((str(member.id), member.name, task))
-    dbase.add_item(new_user, 'user_list')
+    dbase.add_item(new_user, 'new_user')
 
 async def delete_message(ctx):
     try:
@@ -64,8 +64,6 @@ async def info(ctx):
 async def embed(ctx, title, *args):
     global dbase
     user_status = dbase.get_user('status', ctx.author.id)
-    print(user_status)
-    print(type(user_status))
     await delete_message(ctx)
     text = ''
     for word in args:
@@ -82,15 +80,15 @@ async def access(ctx, *args):
     global dbase, one_level_role
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
-    if not dbase.get_user('user_list', ctx.author.id):
+    if not dbase.get_user('list', ctx.author.id):
         new_user(ctx.author)
     for role in member.roles:
         if one_level_role == role.id:
             await ctx.send(f"У вас уже есть такая роль")
             break
     else:
-        cur_user = dbase.get_user('user_list', ctx.author.id)
-        cur_quest = dbase.get_quest('quest_task', cur_user[0][2])
+        cur_user = dbase.get_user('list', ctx.author.id)
+        cur_quest = dbase.get_quest('task', cur_user[0][2])
         await ctx.send(f'{ctx.author.mention}, {task_string}{cur_quest[0]}{answer_string}')
 
 @bot.command()
@@ -100,10 +98,8 @@ async def answer(ctx, *args):
         guild = bot.get_guild(guild_id)
         role = guild.get_role(one_level_role)
         member = guild.get_member(ctx.message.author.id)
-        task_id = dbase.get_user('user_task', ctx.author.id)
-        print(args[0])
-        print(dbase.get_quest('quest_answer', task_id[0])[0])
-        if str(args[0]) == str(dbase.get_quest('quest_answer', task_id[0])[0]):
+        task_id = dbase.get_user('task', ctx.author.id)
+        if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
             await delete_message(ctx)
             await member.add_roles(role)
             await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня!")
