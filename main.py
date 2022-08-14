@@ -66,8 +66,12 @@ async def embed(ctx, title, *args):
     user_status = dbase.get_user('status', ctx.author.id)
     print(user_status)
     print(type(user_status))
+    await delete_message(ctx)
+    text = ''
+    for word in args:
+        text += word + ' '
     if user_status[0] == 'admin':
-        embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{args}')
+        embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
         await ctx.send(f'Ваш статус - {user_status}, только пользователи со статусом admin могут отправлять EMBED сообщения')
