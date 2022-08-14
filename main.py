@@ -47,8 +47,15 @@ async def on_member_remove(member):
 def new_user(member):
     global quests_id
     task = random.choice(quests_id)
-    new_user = ((str(member.id), member.name, task))
+    new_user = ((str(member.id), member.name, task, 'user'))
     dbase.add_item(new_user, 'new_user')
+
+async def check_user(ctx):
+    global dbase
+    user = dbase.get_user('user', ctx.author.id)
+    await delete_message(ctx)
+    if not user: new_user(ctx.author)
+    return True
 
 async def check_status(ctx):
     global dbase
@@ -71,6 +78,7 @@ async def info(ctx):
 @bot.command()
 async def status(ctx, stat_name: str, stat):
     global dbase
+
     if await check_status(ctx):
         dbase.update_item('set_status', stat_name[2:-1], stat)
         await ctx.send(
@@ -106,8 +114,7 @@ async def access(ctx, *args):
     global dbase, one_level_role
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
-    if not dbase.get_user('list', ctx.author.id):
-        new_user(ctx.author)
+    await check_user(ctx.author)
     for role in member.roles:
         if one_level_role == role.id:
             await ctx.send(f"У вас уже есть такая роль")

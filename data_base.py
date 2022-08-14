@@ -18,7 +18,7 @@ class DataBase():
 
     def get_user(self, list_select: str, *args):
         match list_select:
-            case 'list':
+            case 'user':
                 self.cur.execute(f'SELECT dis_user_id, name, task FROM user_list WHERE dis_user_id = {args[0]}')
                 return [tuple(elem) for elem in self.cur]
             case 'task':
@@ -52,7 +52,7 @@ class DataBase():
     def add_item(self, new_item, list_select: str):
         match list_select:
             case 'new_user':
-                self.cur.execute(f'INSERT INTO user_list (dis_user_id, name, task) VALUES (%s, %s, %s)', new_item)
+                self.cur.execute(f'INSERT INTO user_list (dis_user_id, name, task, user_status) VALUES (%s, %s, %s, %s)', new_item)
             case 'new_quest':
                 self.cur.execute(f'INSERT INTO quest_list (task, answer) VALUES (%s, %s)', new_item)
         self.base.commit()
