@@ -11,7 +11,7 @@ class DataBase():
     def create_table(self, list_select: str):
         match list_select:
             case 'user_list':
-                self.base.execute(f'CREATE TABLE IF NOT EXISTS {list_select} (user_id PRIMARY KEY, dis_user_id, name, status, task)')
+                self.base.execute(f'CREATE TABLE IF NOT EXISTS {list_select} (user_id PRIMARY KEY, dis_user_id, name, user_status, task)')
             case 'quest_list':
                 self.base.execute(f'CREATE TABLE IF NOT EXISTS {list_select} (quest_id PRIMARY KEY, task, answer)')
         self.base.commit()
@@ -60,9 +60,9 @@ class DataBase():
     def update_item(self, list_select, user_id, task):
         match list_select:
             case 'set_task':
-                self.cur.execute(f'UPDATE user_list SET task = {task} WHERE name = {user_id}')
+                self.cur.execute(f'UPDATE user_list SET task = {task} WHERE dis_user_id = {user_id}')
             case 'set_status':
-                self.cur.execute(f'UPDATE user_list SET status = {task} WHERE name = {user_id}')
+                self.cur.execute(f'UPDATE user_list SET user_status = {task} WHERE dis_user_id = {user_id}')
         self.base.commit()
 
     def delete_item(self, id, list_select: str):

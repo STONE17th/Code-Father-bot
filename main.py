@@ -73,7 +73,7 @@ async def status(ctx, user_name: str, stat):
     global dbase
     print(user_name[1:-1])
     if check_status(ctx):
-        dbase.update_item('set_status', user_name[1:-1], stat)
+        dbase.update_item('set_status', user_name[2:-1], stat)
         await ctx.send(
             f'Пользователь {ctx.author.name} теперь Админ ')
     else:
