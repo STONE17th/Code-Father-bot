@@ -73,7 +73,11 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
-    await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+    if await check_status(ctx):
+        await ctx.author.send(f'{ctx.author.mention}, у вас статус admin и вы можете:\n/embed <Заголовок> <Текст сообщения> - Загловок из одного слова, текст сообщения - сколько угодно\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть\n/status <пользователь> <должность> - выдать пользователю должность, упомянуть пользователя удобно правой кнопкой из должностей пока только admin и user')
+
+    else:
+        await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
 async def status(ctx, stat_name: str, stat):
