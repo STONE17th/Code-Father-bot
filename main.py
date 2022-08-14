@@ -61,9 +61,15 @@ async def info(ctx):
     await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
-async def access_user_task(ctx, *args):
+async def embed(ctx, *args):
     global dbase
-    dbase.get_quest('set_quest', ctx.author.id, args[0])
+    user_status = dbase.get_user('status', ctx.author.id)
+    if user_status == 'admin':
+        embed = discord.Embed(color=0xff9900, title=f'{args[0]}', description=f'{args[1]}')
+        await ctx.send(embed=embed)
+    else:
+        await ctx.send(f'Ваш статус - {user_status}, только пользователи со статусом admin могут отправлять EMBED сообщения')
+
 
 @bot.command()
 async def access(ctx, *args):
