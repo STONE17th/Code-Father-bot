@@ -114,7 +114,7 @@ async def access(ctx, *args):
     global dbase, one_level_role
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
-    await check_user(ctx.author)
+    await check_user(ctx)
     for role in member.roles:
         if one_level_role == role.id:
             await ctx.send(f"У вас уже есть такая роль")
