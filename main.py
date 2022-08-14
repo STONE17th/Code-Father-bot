@@ -64,8 +64,8 @@ async def info(ctx):
 async def embed(ctx, *args):
     global dbase
     user_status = dbase.get_user('status', ctx.author.id)
-    print(status)
-    print(type(status))
+    print(user_status)
+    print(type(user_status))
     if user_status == 'admin':
         embed = discord.Embed(color=0xff9900, title=f'{args[0]}', description=f'{args[1]}')
         await ctx.send(embed=embed)
