@@ -50,7 +50,7 @@ def new_user(member):
     new_user = ((str(member.id), member.name, task))
     dbase.add_item(new_user, 'new_user')
 
-def check_status(ctx):
+async def check_status(ctx):
     global dbase
     user_status = dbase.get_user('status', ctx.author.id)
     await delete_message(ctx)
