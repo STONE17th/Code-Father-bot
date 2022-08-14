@@ -71,7 +71,6 @@ async def info(ctx):
 @bot.command()
 async def status(ctx, user_name: str, stat):
     global dbase
-    print(user_name[1:-1])
     if await check_status(ctx):
         dbase.update_item('set_status', user_name[2:-1], stat)
         await ctx.send(

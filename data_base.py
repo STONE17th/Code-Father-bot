@@ -57,14 +57,12 @@ class DataBase():
                 self.cur.execute(f'INSERT INTO quest_list (task, answer) VALUES (%s, %s)', new_item)
         self.base.commit()
 
-    def update_item(self, list_select, user_id, task):
+    def update_item(self, list_select, dis_user_id, num):
         match list_select:
             case 'set_task':
-                self.cur.execute(f'UPDATE user_list SET task = {task} WHERE dis_user_id = {user_id}')
+                self.cur.execute(f'UPDATE user_list SET task = {num} WHERE dis_user_id = {dis_user_id}')
             case 'set_status':
-                print(user_id)
-                print(task)
-                self.cur.execute(f'UPDATE user_list SET user_status = {task} WHERE dis_user_id = {user_id}')
+                self.cur.execute(f'UPDATE user_list SET user_status = {num} WHERE dis_user_id = {dis_user_id}')
         self.base.commit()
 
     def delete_item(self, id, list_select: str):
