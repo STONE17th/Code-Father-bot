@@ -154,6 +154,8 @@ async def vpbadd(ctx, user_id):
         guild = bot.get_guild(guild_id)
         role = guild.get_role(vpb_role)
         member = guild.get_member(user_id[2:-1])
+        print(guild)
+        print(role)
         print(member)
         print(type(member))
         await member.add_roles(role)
