@@ -115,7 +115,7 @@ async def embed(ctx, title, *args):
 
 
 @bot.command()
-async def access(ctx, *args):
+async def access(ctx, *args, **kwargs):
     global dbase, one_level_role
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
@@ -130,7 +130,7 @@ async def access(ctx, *args):
         await ctx.send(f'{ctx.author.mention}, {task_string}{cur_quest[0]}{answer_string}')
 
 @bot.command()
-async def answer(ctx, *args):
+async def answer(ctx, *args, **kwargs):
     global dbase, quest_answers, simple_role
     await check_user(ctx)
     if not args == ():
@@ -160,7 +160,7 @@ async def game_info():
     global status
     await bot.wait_until_ready()
     while not bot.is_closed():
-        await bot.change_presence(activity=discord.Game(status))
+        await bot.change_presence(activity=discord.Game('/info'))
         await asyncio.sleep(15)
 
 bot.loop.create_task(game_info())
