@@ -11,6 +11,7 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 base = quests = quests_id = None
 
 one_level_role =1000730137731551382
+vpb_role = 1008289239210938518
 guild_id = 996841246016417962
 start_channel = 1006321073958166548
 
@@ -144,6 +145,15 @@ async def answer(ctx, *args):
         else:
             await delete_message(ctx)
             await ctx.send(f'{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль')
+
+@bot.command()
+async def vpbadd(ctx, user_id):
+    if ctx.author.id == 1004464010189623296 or ctx.author.id == 669628282756530207:
+        guild = bot.get_guild(guild_id)
+        role = guild.get_role(vpb_role)
+        member = guild.get_member(user_id)
+        await member.add_roles(role)
+        await ctx.send(f"Пользователь {user_id}, получил роль {role}!")
 
 async def game_info():
     global status
