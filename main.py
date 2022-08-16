@@ -148,12 +148,12 @@ async def answer(ctx, *args):
 
 @bot.command()
 async def vpbadd(ctx, user_id):
-    print(user_id)
+    print(user_id[2:-1])
     if ctx.author.id == 1004464010189623296 or ctx.author.id == 669628282756530207:
         print('Зашел')
         guild = bot.get_guild(guild_id)
         role = guild.get_role(vpb_role)
-        member = guild.get_member(user_id)
+        member = guild.get_member(user_id[2:-1])
         await member.add_roles(role)
         await ctx.send(f"Пользователь {user_id}, получил роль {role}!")
 
