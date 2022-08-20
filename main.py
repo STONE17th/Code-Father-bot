@@ -85,7 +85,7 @@ async def info(ctx):
     guild = bot.get_guild(guild_id)
     role = guild.get_role(get_key(cf_role, 1))
     roles = []
-    [roles.append(guild.get_role(x)) for x in await get_user_roles(ctx)]
+    [roles.append(guild.get_role(x).name) for x in await get_user_roles(ctx)]
     print(roles)
     for role in await get_user_roles(ctx):
         match cf_role.get(role):
