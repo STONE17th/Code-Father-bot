@@ -22,8 +22,8 @@ guild_id = 996841246016417962
 start_channel = 1006321073958166548
 
 status = '/info'
-task_string = f'что выведет в консоль этот код:\n'
-answer_string = f'\n\nОтвет отправляй так: /answer <твой вариант ответа>'
+task_string = f'что выведет в *консоль* этот код:\n'
+answer_string = f'\n\nОтвет отправляй так: **/answer** *<твой вариант ответа>*'
 
 @bot.event
 async def on_ready():
