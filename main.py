@@ -86,7 +86,9 @@ async def info(ctx):
     roles = []
     [roles.append(guild.get_role(x).name) for x in await get_user_roles(ctx)]
     txt_role = ''
-    txt_access = 'всё'
+    txt_txt_channels = 'Текстовые каналы **Прихожая**, **Важная информация**, **Флудильня**'
+    txt_voice_channels = 'Голосовые каналы **Переговорная**'
+    txt_advanced = ''
     txt_commands = '**/info** - помощь по боту канала CODE Father\'s\n'
     for role in roles:
         txt_role += f'{role}, '
@@ -96,17 +98,21 @@ async def info(ctx):
                 txt_commands += '**/access** - для получения доступа первого уровня\n'
                 txt_commands += '**/answer** *<твой ответ>* - для отправки ответа на полученную задачу *(**Важно!** Ответы False и false - разные вещи. Вводи именно так, как требует задача.)*\n'
             case 1:
+                txt_txt_channels += ', **Полезные ссылки**, **Документация Python**, **Podcasts**, **Вопросы для гостя**'
+                txt_voice_channels += ', **Аудитория CF**, **Podcast**'
                 pass
             case 2:
-                print('Второй')
-                pass
+                txt_advanced += 'Создавать свою **Семью** и получаешь доступ к текстовому и голосовму каналу своей семьи '
             case 3:
                 print('Третий')
                 pass
             case 4:
+                txt_txt_channels += ', **Штаб**'
+                txt_voice_channels += ', **Штаб**'
+                txt_advanced += 'выдавать и снимать роли, участвовать в совещании штаба CF '
                 txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
                 txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть'
-    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s у тебя есть роли:\n{txt_role[:-2]}.\n\nТебе доступно:\n{txt_access}\n\nИ ты можешь использовать следующие команды бота:\n{txt_commands}')
+    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s у тебя есть роли:\n{txt_role[:-2]}.\n\nТебе доступно:\n{txt_txt_channels}\n\n{txt_voice_channels}\n{txt_advanced}\nИ ты можешь использовать следующие команды бота:\n{txt_commands}')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
