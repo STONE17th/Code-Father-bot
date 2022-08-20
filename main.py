@@ -47,7 +47,7 @@ async def new_user(member):
     global quests_id
     task = random.choice(quests_id)
     date = datetime.now()
-    user = ((str(member.id), member.name, task, 10, 0, ))
+    user = ((str(member.id), member.name, task, 10, 0, date))
     dbase.add_item('new_user', user)
     await member.add_roles(get_key(cf_role, 4))
 
@@ -81,9 +81,6 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
-    date = datetime.now()
-    print(type(date))
-    print(date)
     # global dbase
     # await delete_message(ctx)
     # member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
