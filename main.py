@@ -40,9 +40,9 @@ async def on_member_join(member):
     embed=discord.Embed(title="Добро пожаловать!", description=f'Эй, народ! Зацените! Кто это тут к нам залетел :)\n\nПривет, {member.mention}. Я бот канала CODE Father\'s. Пока я мало чего умею, но всё впереди...\n\nЗагляни в ЛС, я там тебе кое-чего прислал', color=0xCC974F)
     await bot.get_channel(start_channel).send(embed=embed)
     await member.send(f'Привет, {member.name}! Рады приветствовать тебя на нашем сервере. Чем мы здесь занимаемся?\nМы создаем дружное коммьюнити из единомышленников в IT сфере. Здесь ты сможешь получить помощь с ДЗ, получить консультацию по текущим темам от однокурсников, пообщаться в прямом эфире с крутыми гостями, которые уже работают в IT, обменяться опытом, найти команду для реализации своих идей, да и просто пообщаться :)\nЕсли возникнут вопросы, то пиши кому-нибудь из администараторов и тебе обязательно ответят\n\nНо для начала было бы неплохо получить роль первого уровня (для доступа к голосовому чату и архиву с полезными ссылками)\nДля этого просто введи на канале /access и мы с тобой всё сделаем!\n\nПриятных тебе минут на сервере и удачного обучения!\n\nP.S. Если увидишь Джонна Конора - передай привет')
-    new_user(member)
+    await new_user(member)
 
-def new_user(member):
+async def new_user(member):
     global quests_id
     task = random.choice(quests_id)
     user = ((str(member.id), member.name, task, 10, 0))
@@ -53,7 +53,7 @@ async def check_user(ctx):
     global dbase
     user = dbase.get_user('user', ctx.author.id)
     await delete_message(ctx)
-    if not user: new_user(ctx.author)
+    if not user: await new_user(ctx.author)
     return True
 
 @bot.event
