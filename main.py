@@ -56,6 +56,11 @@ def new_user(member):
     user = ((str(member.id), member.name, task, 10, 0))
     dbase.add_item('new_user', user)
 
+def get_key(dict, value):
+    for k, v in dict.items():
+        if v == value:
+            return k
+
 async def check_user(ctx):
     global dbase
     user = dbase.get_user('user', ctx.author.id)
@@ -103,9 +108,12 @@ async def info(ctx):
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
     global dbase
-    print(cf_role.keys())
+    def get_key(dict, value):
+        for k, v in dict.items():
+            if v == value:
+                return k
     print(await get_user_roles(ctx))
-    if 5 in await get_user_roles(ctx):
+    if get_key(cf_role, 4) in await get_user_roles(ctx):
         print('Можно')
         dbase.update_item('set_task', stat_name[2:-1], stat)
         await ctx.send(
