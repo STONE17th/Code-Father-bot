@@ -70,7 +70,7 @@ def get_key(dict, value):
 
 async def get_user_roles(ctx):
     global dbase
-    member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
+    member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles]
     await delete_message(ctx)
     return member_roles
 
