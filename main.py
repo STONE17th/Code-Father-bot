@@ -138,7 +138,7 @@ async def access(ctx, *args, **kwargs):
     print(f'роль проверки {get_key(cf_role, 1)}')
     print(type((await get_user_roles(ctx))[0]))
     print(f'все роли {(await get_user_roles(ctx))[0]}')
-    if get_key(cf_role, 1) in await get_user_roles(ctx):
+    if get_key(cf_role, 1) == await get_user_roles(ctx):
         await ctx.send(f"У вас уже есть такая роль")
     else:
         user_task = dbase.get_user('task', str(ctx.author.id))
