@@ -49,7 +49,7 @@ class DataBase():
     def add_item(self, list_select: str, new_item):
         match list_select:
             case 'new_user':
-                self.cur.execute(f'INSERT INTO user_list (dis_id, name, task, points, copa, date_reg) VALUES (%s, %s, %s, %s, %s, %s)', new_item)
+                self.cur.execute(f'INSERT INTO user_list (dis_id, name, task, points, family, date_reg) VALUES (%s, %s, %s, %s, %s, %s)', new_item)
             case 'new_quest':
                 self.cur.execute(f'INSERT INTO quest_list (task, answer) VALUES (%s, %s)', new_item)
         self.base.commit()
