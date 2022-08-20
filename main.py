@@ -153,8 +153,8 @@ async def answer(ctx, *args, **kwargs):
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
             await delete_message(ctx)
             await member.add_roles(new_role)
-            await member.remove_roles(old_role)
             await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой /info можете узнать свои новые возможности")
+            await member.remove_roles(old_role)
         else:
             await delete_message(ctx)
             await ctx.send(f'{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль')
