@@ -87,13 +87,14 @@ async def info(ctx):
     [roles.append(guild.get_role(x).name) for x in await get_user_roles(ctx)]
     txt_role = ''
     txt_access = 'всё'
-    txt_commands = ''
+    txt_commands = '**/info** - помощь по боту канала CODE Father\'s\n'
     for role in roles:
         txt_role += f'{role}, '
     for role in await get_user_roles(ctx):
         match cf_role.get(role):
             case 0:
-                txt_commands += f'для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access и следуй инструкциям'
+                txt_commands += '**/access** - для получения доступа первого уровня\n'
+                txt_commands += '**/answer** *<твой ответ>* - для отправки ответа на полученную задачу *(**Важно!** Ответы False и false - разные вещи. Вводи именно так, как требует задача.)*\n'
             case 1:
                 pass
             case 2:
