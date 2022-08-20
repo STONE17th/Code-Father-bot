@@ -5,8 +5,8 @@ class DataBase():
     def __init__(self, base):
         self.base = base
         self.cur = self.base.cursor()
-        # self.create_table('user_list')
-        # self.create_table('quest_list')
+        self.create_table('user_list')
+        self.create_table('quest_list')
 
     def create_table(self, list_select: str):
         match list_select:
