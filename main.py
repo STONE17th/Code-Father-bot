@@ -88,6 +88,7 @@ async def info(ctx):
     [roles.append(guild.get_role(x).name) for x in await get_user_roles(ctx)]
     print(roles)
     for role in await get_user_roles(ctx):
+        print(cf_role.get(role))
         match cf_role.get(role):
             case 0:
                 await ctx.author.send(f'для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
