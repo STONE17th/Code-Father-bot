@@ -30,6 +30,8 @@ async def on_ready():
     print('On start')
     dbase = data_base.DataBase(
         mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
+    dbase.create_table('user_list')
+    dbase.create_table('quest_list')
     if dbase:
         print('DB Connected... OK')
         quests = dbase.get_quest('all')
