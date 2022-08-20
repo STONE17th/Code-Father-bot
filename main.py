@@ -103,6 +103,8 @@ async def info(ctx):
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
     global dbase
+    print(cf_role.get(4))
+    print(await get_user_roles(ctx))
     if cf_role.get(4) in await get_user_roles(ctx):
         print('Можно')
         dbase.update_item('set_task', stat_name[2:-1], stat)
