@@ -9,7 +9,7 @@ import data_base
 
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
-dbase = quests = quests_id = None
+# dbase = quests = quests_id = None
 
 cf_role = {1010186572156641290 : 0,
            1000730137731551382 : 1,
@@ -37,29 +37,17 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    welcome = bot.get_channel(start_channel)
     embed=discord.Embed(title="Добро пожаловать!", description=f'Эй, народ! Зацените! Кто это тут к нам залетел :)\n\nПривет, {member.mention}. Я бот канала CODE Father\'s. Пока я мало чего умею, но всё впереди...\n\nЗагляни в ЛС, я там тебе кое-чего прислал', color=0xCC974F)
-    await welcome.send(embed=embed)
+    await bot.get_channel(start_channel).send(embed=embed)
     await member.send(f'Привет, {member.name}! Рады приветствовать тебя на нашем сервере. Чем мы здесь занимаемся?\nМы создаем дружное коммьюнити из единомышленников в IT сфере. Здесь ты сможешь получить помощь с ДЗ, получить консультацию по текущим темам от однокурсников, пообщаться в прямом эфире с крутыми гостями, которые уже работают в IT, обменяться опытом, найти команду для реализации своих идей, да и просто пообщаться :)\nЕсли возникнут вопросы, то пиши кому-нибудь из администараторов и тебе обязательно ответят\n\nНо для начала было бы неплохо получить роль первого уровня (для доступа к голосовому чату и архиву с полезными ссылками)\nДля этого просто введи на канале /access и мы с тобой всё сделаем!\n\nПриятных тебе минут на сервере и удачного обучения!\n\nP.S. Если увидишь Джонна Конора - передай привет')
     new_user(member)
-    guild = bot.get_guild(guild_id)
-    role = guild.get_role(cf_role[0])
-    await member.add_roles(role)
-
-@bot.event
-async def on_member_remove(member):
-    dbase.delete_item(member.id, 'user_list')
 
 def new_user(member):
     global quests_id
     task = random.choice(quests_id)
     user = ((str(member.id), member.name, task, 10, 0))
     dbase.add_item('new_user', user)
-
-def get_key(dict, value):
-    for k, v in dict.items():
-        if v == value:
-            return k
+    await member.add_roles(get_key(cf_role, 4))
 
 async def check_user(ctx):
     global dbase
@@ -68,12 +56,20 @@ async def check_user(ctx):
     if not user: new_user(ctx.author)
     return True
 
+@bot.event
+async def on_member_remove(member):
+    dbase.delete_item(member.id, 'user_list')
+
+def get_key(dict, value):
+    for k, v in dict.items():
+        if v == value:
+            return k
+
 async def get_user_roles(ctx):
     global dbase
     member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     await delete_message(ctx)
     return member_roles
-
 
 async def delete_message(ctx):
     try:
@@ -108,11 +104,6 @@ async def info(ctx):
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
     global dbase
-    def get_key(dict, value):
-        for k, v in dict.items():
-            if v == value:
-                return k
-    print(await get_user_roles(ctx))
     if get_key(cf_role, 4) in await get_user_roles(ctx):
         print('Можно')
         dbase.update_item('set_task', stat_name[2:-1], stat)
@@ -128,7 +119,7 @@ async def embed(ctx, title, *args):
     text = ''
     for word in args:
         text += word + ' '
-    if await get_user_status(ctx) == 4:
+    if await get_user_roles(ctx) == 4:
         embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
