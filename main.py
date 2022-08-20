@@ -82,6 +82,7 @@ async def delete_message(ctx):
 @bot.command()
 async def info(ctx):
     date = datetime.now()
+    print(type(date))
     print(date)
     # global dbase
     # await delete_message(ctx)
