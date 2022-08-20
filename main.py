@@ -1,4 +1,5 @@
 from discord import utils
+from datetime import datetime
 import asyncio
 import random
 import discord
@@ -45,7 +46,8 @@ async def on_member_join(member):
 async def new_user(member):
     global quests_id
     task = random.choice(quests_id)
-    user = ((str(member.id), member.name, task, 10, 0))
+    date = datetime.now()
+    user = ((str(member.id), member.name, task, 10, 0, ))
     dbase.add_item('new_user', user)
     await member.add_roles(get_key(cf_role, 4))
 
@@ -79,6 +81,8 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
+    date = datetime.now()
+    print(date)
     # global dbase
     # await delete_message(ctx)
     # member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]

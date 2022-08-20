@@ -5,15 +5,15 @@ class DataBase():
     def __init__(self, base):
         self.base = base
         self.cur = self.base.cursor()
-        self.create_table('user_list')
-        self.create_table('quest_list')
+        # self.create_table('user_list')
+        # self.create_table('quest_list')
 
     def create_table(self, list_select: str):
         match list_select:
             case 'user_list':
-                self.cur.execute(f'CREATE TABLE IF NOT EXISTS user_list (user_id PRIMARY KEY, dis_id, name, task, points, copa)')
+                self.base.execute(f'CREATE TABLE IF NOT EXISTS user_list (user_id INT AUTO_INCREMENT PRIMARY KEY, dis_id, name, task, points, family)')
             case 'quest_list':
-                self.cur.execute(f'CREATE TABLE IF NOT EXISTS quest_list (quest_id PRIMARY KEY, task, answer)')
+                self.base.execute(f'CREATE TABLE IF NOT EXISTS quest_list (quest_id PRIMARY KEY, task, answer)')
         self.base.commit()
 
     def get_user(self, list_select: str, *args):
@@ -49,7 +49,7 @@ class DataBase():
     def add_item(self, list_select: str, new_item):
         match list_select:
             case 'new_user':
-                self.cur.execute(f'INSERT INTO user_list (dis_id, name, task, points, copa) VALUES (%s, %s, %s, %s, %s)', new_item)
+                self.cur.execute(f'INSERT INTO user_list (dis_id, name, task, points, copa, date_reg) VALUES (%s, %s, %s, %s, %s, %s)', new_item)
             case 'new_quest':
                 self.cur.execute(f'INSERT INTO quest_list (task, answer) VALUES (%s, %s)', new_item)
         self.base.commit()
