@@ -103,11 +103,13 @@ async def info(ctx):
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
     global dbase
-    if await get_user_status(ctx) == 4:
+    if cf_role.get(4) in await get_user_roles(ctx):
+        print('Можно')
         dbase.update_item('set_task', stat_name[2:-1], stat)
         await ctx.send(
             f'У пользователя {stat_name} теперь {stat} задача')
     else:
+        print('Нельзя')
         await ctx.send(f'Эта команда для вас недоступна')
 
 @bot.command()
