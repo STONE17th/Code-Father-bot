@@ -134,7 +134,7 @@ async def embed(ctx, title, *args):
     text = ''
     for word in args:
         text += word + ' '
-    if await get_user_roles(ctx) == 4:
+    if get_key(cf_role, 4) == await get_user_roles(ctx):
         embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
