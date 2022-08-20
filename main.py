@@ -134,10 +134,12 @@ async def access(ctx, *args, **kwargs):
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
     await check_user(ctx)
+    print(get_key(cf_role, 1))
+    print(await get_user_roles(ctx))
     if get_key(cf_role, 1) in await get_user_roles(ctx):
         await ctx.send(f"У вас уже есть такая роль")
     else:
-        user_task = dbase.get_user('task', ctx.author.id)
+        user_task = dbase.get_user('task', str(ctx.author.id))
         user_quest = dbase.get_quest('task', user_task[0][2])
         print(user_task)
         print(user_quest)
