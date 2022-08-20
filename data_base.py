@@ -11,9 +11,9 @@ class DataBase():
     def create_table(self, list_select: str):
         match list_select:
             case 'user_list':
-                self.base.execute(f'CREATE TABLE IF NOT EXISTS user_list (user_id PRIMARY KEY, dis_id, name, task, points, copa)')
+                self.base(f'CREATE TABLE IF NOT EXISTS user_list (user_id PRIMARY KEY, dis_id, name, task, points, copa)')
             case 'quest_list':
-                self.base.execute(f'CREATE TABLE IF NOT EXISTS quest_list (quest_id PRIMARY KEY, task, answer)')
+                self.base(f'CREATE TABLE IF NOT EXISTS quest_list (quest_id PRIMARY KEY, task, answer)')
         self.base.commit()
 
     def get_user(self, list_select: str, *args):
