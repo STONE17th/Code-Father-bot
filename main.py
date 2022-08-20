@@ -10,7 +10,11 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
 base = quests = quests_id = None
 
-one_level_role =1000730137731551382
+cf_role = [1010186572156641290,
+           1000730137731551382,
+           1009910414961811486,
+           1009928506966290442,
+           1001397006993985646]
 vpb_role = 1008289239210938518
 guild_id = 996841246016417962
 start_channel = 1006321073958166548
@@ -27,11 +31,8 @@ async def on_ready():
         mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
     if dbase:
         print('DB Connected... OK')
-        quests = dbase.get_quest('list')
+        quests = dbase.get_quest('all')
         quests_id = dbase.get_quest('id')
-
-# [print(task[1]) for task in quests]
-# print(random.choice(quests_id))
 
 @bot.event
 async def on_member_join(member):
@@ -40,6 +41,9 @@ async def on_member_join(member):
     await welcome.send(embed=embed)
     await member.send(f'Привет, {member.name}! Рады приветствовать тебя на нашем сервере. Чем мы здесь занимаемся?\nМы создаем дружное коммьюнити из единомышленников в IT сфере. Здесь ты сможешь получить помощь с ДЗ, получить консультацию по текущим темам от однокурсников, пообщаться в прямом эфире с крутыми гостями, которые уже работают в IT, обменяться опытом, найти команду для реализации своих идей, да и просто пообщаться :)\nЕсли возникнут вопросы, то пиши кому-нибудь из администараторов и тебе обязательно ответят\n\nНо для начала было бы неплохо получить роль первого уровня (для доступа к голосовому чату и архиву с полезными ссылками)\nДля этого просто введи на канале /access и мы с тобой всё сделаем!\n\nПриятных тебе минут на сервере и удачного обучения!\n\nP.S. Если увидишь Джонна Конора - передай привет')
     new_user(member)
+    guild = bot.get_guild(guild_id)
+    role = guild.get_role(cf_role[0])
+    await member.add_roles(role)
 
 @bot.event
 async def on_member_remove(member):
@@ -48,8 +52,8 @@ async def on_member_remove(member):
 def new_user(member):
     global quests_id
     task = random.choice(quests_id)
-    new_user = ((str(member.id), member.name, task, 'user'))
-    dbase.add_item(new_user, 'new_user')
+    user = ((str(member.id), member.name, task, 10, 0))
+    dbase.add_item('new_user', user)
 
 async def check_user(ctx):
     global dbase
@@ -58,12 +62,11 @@ async def check_user(ctx):
     if not user: new_user(ctx.author)
     return True
 
-async def check_status(ctx):
+async def get_user_status(ctx):
     global dbase
     user_status = dbase.get_user('status', ctx.author.id)
     await delete_message(ctx)
-    if user_status[0] == 'admin': return True
-    else: return False
+    return user_status[0]
 
 
 async def delete_message(ctx):
@@ -74,17 +77,26 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
-    if await check_status(ctx):
-        await ctx.author.send(f'{ctx.author.mention}, у вас статус admin и вы можете:\n/embed <Заголовок> <Текст сообщения> - Загловок из одного слова, текст сообщения - сколько угодно\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть\n/status <пользователь> <должность> - выдать пользователю должность, упомянуть пользователя удобно правой кнопкой из должностей пока только admin и user')
+    print(ctx)
+    # status = await get_user_status(ctx)
+    # match status:
+    #     case 0:
+    #         pass
+    #     case 1:
+    #         await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+    #     case 2:
+    #         pass
+    #     case 3:
+    #         pass
+    #     case 4:
+    #         await ctx.author.send(f'{ctx.author.mention}, у вас статус admin и вы можете:\n/embed <Заголовок> <Текст сообщения> - Загловок из одного слова, текст сообщения - сколько угодно\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть\n/status <пользователь> <должность> - выдать пользователю должность, упомянуть пользователя удобно правой кнопкой из должностей пока только admin и user')
 
-    else:
-        await ctx.author.send(f'{ctx.author.mention}, для получения роли GeekBrains (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
 async def status(ctx, stat_name: str, stat):
     global dbase
 
-    if await check_status(ctx):
+    if await get_user_status(ctx) == 4:
         dbase.update_item('set_status', stat_name[2:-1], stat)
         await ctx.send(
             f'Пользователь {stat_name} теперь {stat}')
@@ -94,7 +106,7 @@ async def status(ctx, stat_name: str, stat):
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
     global dbase
-    if await check_status(ctx):
+    if await get_user_status(ctx) == 4:
         dbase.update_item('set_task', stat_name[2:-1], stat)
         await ctx.send(
             f'У пользователя {stat_name} теперь {stat} задача')
@@ -107,7 +119,7 @@ async def embed(ctx, title, *args):
     text = ''
     for word in args:
         text += word + ' '
-    if await check_status(ctx):
+    if await get_user_status(ctx) == 4:
         embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
@@ -135,7 +147,7 @@ async def answer(ctx, *args, **kwargs):
     await check_user(ctx)
     if not args == ():
         guild = bot.get_guild(guild_id)
-        role = guild.get_role(one_level_role)
+        role = guild.get_role(cf_role[1])
         member = guild.get_member(ctx.message.author.id)
         task_id = dbase.get_user('task', ctx.author.id)
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
@@ -147,7 +159,7 @@ async def answer(ctx, *args, **kwargs):
             await ctx.send(f'{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль')
 
 @bot.command()
-async def vpbadd(ctx, user_id):
+async def adduser(ctx, user_id):
     await delete_message(ctx)
     if ctx.author.id == 1004464010189623296 or ctx.author.id == 669628282756530207:
         guild = bot.get_guild(guild_id)
