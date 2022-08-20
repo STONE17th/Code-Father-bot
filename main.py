@@ -82,6 +82,7 @@ async def info(ctx):
     mentions = [role.mention for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     role = utils.get(ctx.guild.roles, id=cf_role[4])
     print(mentions)
+    print(mentions[0])
     # status = await get_user_status(ctx)
     # match status:
     #     case 0:
