@@ -11,11 +11,11 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
 base = quests = quests_id = None
 
-cf_role = {0 : 1010186572156641290,
-           1 : 1000730137731551382,
-           2 : 1009910414961811486,
-           3 : 1009928506966290442,
-           4 : 1001397006993985646}
+cf_role = {1010186572156641290 : 0,
+           1000730137731551382 : 1,
+           1009910414961811486 : 2,
+           1009928506966290442 : 3,
+           1001397006993985646 : 4}
 vpb_role = 1008289239210938518
 guild_id = 996841246016417962
 start_channel = 1006321073958166548
@@ -82,19 +82,23 @@ async def info(ctx):
     member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     print(cf_role.get(1))
     for role in member_roles:
-        match role:
+        match cf_role.get(role):
             case 0:
-                pass
+                print('Нулевой')
             case 1:
-                await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
-                await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+                print('Первый')
+                # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+                # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
             case 2:
+                print('Второй')
                 pass
             case 3:
+                print('Третий')
                 pass
             case 4:
+                print('Четвертый')
                 await ctx.author.send(f'{ctx.author.mention}, у вас статус admin и вы можете:\n/embed <Заголовок> <Текст сообщения> - Загловок из одного слова, текст сообщения - сколько угодно\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть\n/status <пользователь> <должность> - выдать пользователю должность, упомянуть пользователя удобно правой кнопкой из должностей пока только admin и user')
-    await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+    # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
 async def status(ctx, stat_name: str, stat):
