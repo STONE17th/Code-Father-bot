@@ -106,7 +106,7 @@ async def info(ctx):
             case 4:
                 txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
                 txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть'
-    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\' у тебя есть роли:\n{txt_role[:-2]}.\n\nТебе доступны:\n{txt_access}\n\nИ ты можешь использовать следующие команды бота:\n{txt_commands}')
+    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s у тебя есть роли:\n{txt_role[:-2]}.\n\nТебе доступно:\n{txt_access}\n\nИ ты можешь использовать следующие команды бота:\n{txt_commands}')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
@@ -118,7 +118,7 @@ async def set_task(ctx, stat_name: str, stat):
             f'У пользователя {stat_name} теперь {stat} задача')
     else:
         print('Нельзя')
-        await ctx.send(f'Эта команда для вас недоступна')
+        await ctx.send(f'Эта команда для тебя недоступна')
 
 @bot.command()
 async def embed(ctx, title, *args):
@@ -130,7 +130,7 @@ async def embed(ctx, title, *args):
         embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
-        await ctx.send(f'Эта команда для вас недоступна')
+        await ctx.send(f'Эта команда для тебя недоступна')
 
 
 @bot.command()
@@ -138,7 +138,7 @@ async def access(ctx, *args, **kwargs):
     global dbase, cf_role
     await check_user(ctx)
     if get_key(cf_role, 1) in await get_user_roles(ctx):
-        await ctx.send(f"У вас уже есть такая роль")
+        await ctx.send(f"У тебя уже есть эта роль")
     else:
         user_task = dbase.get_user('task', str(ctx.author.id))
         user_quest = dbase.get_quest('task', int(user_task[0]))
@@ -157,7 +157,7 @@ async def answer(ctx, *args, **kwargs):
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
             await delete_message(ctx)
             await member.add_roles(new_role)
-            await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой /info можете узнать свои новые возможности")
+            await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой **/info** можете узнать свои новые возможности")
             await member.remove_roles(old_role)
         else:
             await delete_message(ctx)
