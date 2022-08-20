@@ -82,16 +82,11 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
-    # global dbase
-    # await delete_message(ctx)
-    # member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
-    info_message = ''
     for role in await get_user_roles(ctx):
         match cf_role.get(role):
             case 0:
                 await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
             case 1:
-                # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
                 pass
             case 2:
                 print('Второй')
@@ -101,7 +96,7 @@ async def info(ctx):
                 pass
             case 4:
                 print('Четвертый')
-                await ctx.author.send('**/embed** __<Заголовок> <Текст сообщения>__ - Загловок из одного слова, текст сообщения - сколько угодно\n\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть')
+                await ctx.author.send('**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
@@ -131,8 +126,6 @@ async def embed(ctx, title, *args):
 @bot.command()
 async def access(ctx, *args, **kwargs):
     global dbase, cf_role
-    guild = bot.get_guild(guild_id)
-    member = guild.get_member(ctx.message.author.id)
     await check_user(ctx)
     if get_key(cf_role, 1) in await get_user_roles(ctx):
         await ctx.send(f"У вас уже есть такая роль")
@@ -156,7 +149,7 @@ async def answer(ctx, *args, **kwargs):
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
             await delete_message(ctx)
             await member.add_roles(role)
-            await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня!")
+            await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой /info можете узнать свои новые возможности")
         else:
             await delete_message(ctx)
             await ctx.send(f'{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль')
