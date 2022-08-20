@@ -88,7 +88,8 @@ async def info(ctx):
             case 0:
                 await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
             case 1:
-                await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+                # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+                pass
             case 2:
                 print('Второй')
                 pass
@@ -126,18 +127,18 @@ async def embed(ctx, title, *args):
 
 @bot.command()
 async def access(ctx, *args, **kwargs):
-    global dbase, one_level_role
+    global dbase, cf_role
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
     await check_user(ctx)
-    for role in member.roles:
-        if one_level_role == role.id:
-            await ctx.send(f"У вас уже есть такая роль")
-            break
+    if get_key(cf_role, 1) in await get_user_roles(ctx):
+        await ctx.send(f"У вас уже есть такая роль")
     else:
-        cur_user = dbase.get_user('user', ctx.author.id)
-        cur_quest = dbase.get_quest('task', cur_user[0][2])
-        await ctx.send(f'{ctx.author.mention}, {task_string}{cur_quest[0]}{answer_string}')
+        user_task = dbase.get_user('task', ctx.author.id)
+        user_quest = dbase.get_quest('task', user_task[0][2])
+        print(user_task)
+        print(user_quest)
+        await ctx.send(f'{ctx.author.mention}, {task_string}{user_quest[0]}{answer_string}')
 
 @bot.command()
 async def answer(ctx, *args, **kwargs):
