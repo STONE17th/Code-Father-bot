@@ -144,7 +144,7 @@ async def access(ctx, *args, **kwargs):
         user_task = dbase.get_user('task', str(ctx.author.id))
         print(user_task[0])
         print(type(user_task[0]))
-        user_quest = dbase.get_quest('task', user_task[0][2])
+        user_quest = dbase.get_quest('task', user_task[0])
         print(user_task)
         print(user_quest)
         await ctx.send(f'{ctx.author.mention}, {task_string}{user_quest[0]}{answer_string}')
