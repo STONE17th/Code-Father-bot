@@ -47,7 +47,7 @@ async def new_user(member):
     global quests_id
     task = random.choice(quests_id)
     date = datetime.now()
-    user = ((str(member.id), member.name, task, 10, 0, date))
+    user = ((member.id, member.name, task, 10, 0, date))
     dbase.add_item('new_user', user)
     await member.add_roles(get_key(cf_role, 4))
 
