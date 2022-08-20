@@ -146,12 +146,14 @@ async def answer(ctx, *args, **kwargs):
     await check_user(ctx)
     if not args == ():
         guild = bot.get_guild(guild_id)
-        role = guild.get_role(get_key(cf_role,1))
+        new_role = guild.get_role(get_key(cf_role,1))
+        old_role = guild.get_role(get_key(cf_role,0))
         member = guild.get_member(ctx.message.author.id)
         task_id = dbase.get_user('task', ctx.author.id)
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
             await delete_message(ctx)
-            await member.add_roles(role)
+            await member.add_roles(new_role)
+            await member.remove_roles(old_role)
             await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой /info можете узнать свои новые возможности")
         else:
             await delete_message(ctx)
