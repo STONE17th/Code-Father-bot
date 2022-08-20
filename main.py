@@ -91,7 +91,6 @@ async def info(ctx):
     for role in roles:
         txt_role += f'{role}, '
     for role in await get_user_roles(ctx):
-        print(cf_role.get(role))
         match cf_role.get(role):
             case 0:
                 txt_commands += f'для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access'
@@ -104,10 +103,9 @@ async def info(ctx):
                 print('Третий')
                 pass
             case 4:
-                print('Четвертый')
                 txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
                 txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть'
-    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\' есть роли:\n{txt_role}\n\nТебе доступны:\n{txt_access}\n\nИ ты можешь использовать следующие команды:\n{txt_commands}')
+    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\' у тебя есть роли:\n{txt_role[:-2]}.\n\nТебе доступны:\n{txt_access}\n\nИ ты можешь использовать следующие команды:\n{txt_commands}')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
