@@ -112,7 +112,7 @@ async def info(ctx):
                 txt_txt_channels += ', **Штаб**'
                 txt_voice_channels += ', **Штаб**'
                 txt_advanced += ', выдавать и снимать роли, участвовать в совещании штаба CF '
-                txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
+                txt_commands += '**/embed** *<Заголовок> <Цвет> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно, цвет в формате **0xffffff**\n'
                 txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать *Упомянуть*'
     await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s ты провел {str(datetime.now() - user_date[0])[:-7]}\nУ тебя есть роли:\n{txt_role[:-2]}.\n\n**Тебе доступно:**\n{txt_txt_channels}\n{txt_voice_channels}\n{txt_advanced}\n\n**И ты можешь использовать следующие команды бота:**\n{txt_commands}')
 
@@ -129,13 +129,13 @@ async def set_task(ctx, stat_name: str, stat):
         await ctx.send(f'Эта команда для тебя недоступна')
 
 @bot.command()
-async def embed(ctx, title, *args):
+async def embed(ctx, title, color = 0xff9900, *args):
     global dbase
     text = ''
     for word in args:
         text += word + ' '
     if get_key(cf_role, 4) in await get_user_roles(ctx):
-        embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
+        embed = discord.Embed(color=f'{color}', title=f'{title}', description=f'{text}')
         await ctx.send(embed=embed)
     else:
         await ctx.send(f'Эта команда для тебя недоступна')
