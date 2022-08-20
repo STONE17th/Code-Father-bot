@@ -9,7 +9,7 @@ import data_base
 
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
-base = quests = quests_id = None
+dbase = quests = quests_id = None
 
 cf_role = {1010186572156641290 : 0,
            1000730137731551382 : 1,
@@ -63,11 +63,11 @@ async def check_user(ctx):
     if not user: new_user(ctx.author)
     return True
 
-async def get_user_status(ctx):
+async def get_user_roles(ctx):
     global dbase
-    user_status = dbase.get_user('status', ctx.author.id)
+    member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     await delete_message(ctx)
-    return user_status[0]
+    return member_roles
 
 
 async def delete_message(ctx):
@@ -78,13 +78,14 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
-    await delete_message(ctx)
-    member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
+    # global dbase
+    # await delete_message(ctx)
+    # member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     info_message = ''
-    for role in member_roles:
+    for role in await get_user_roles(ctx):
         match cf_role.get(role):
             case 0:
-                print('Нулевой')
+                await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
             case 1:
                 print('Первый')
                 # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
@@ -98,18 +99,6 @@ async def info(ctx):
             case 4:
                 print('Четвертый')
                 await ctx.author.send(f'{ctx.author.mention}, у вас статус admin и вы можете:\n\n/embed <Заголовок> <Текст сообщения> - Загловок из одного слова, текст сообщения - сколько угодно\n\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть')
-    # await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
-
-@bot.command()
-async def status(ctx, stat_name: str, stat):
-    global dbase
-
-    if await get_user_status(ctx) == 4:
-        dbase.update_item('set_status', stat_name[2:-1], stat)
-        await ctx.send(
-            f'Пользователь {stat_name} теперь {stat}')
-    else:
-        await ctx.send(f'Эта команда для вас недоступна')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
