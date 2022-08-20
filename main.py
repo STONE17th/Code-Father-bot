@@ -109,10 +109,10 @@ async def info(ctx):
             case 4:
                 txt_txt_channels += ', **Штаб**'
                 txt_voice_channels += ', **Штаб**'
-                txt_advanced += 'выдавать и снимать роли, участвовать в совещании штаба CF '
+                txt_advanced += ', выдавать и снимать роли, участвовать в совещании штаба CF '
                 txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
-                txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть'
-    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s у тебя есть роли:\n{txt_role[:-2]}.\n\nТебе доступно:\n{txt_txt_channels}\n\n{txt_voice_channels}\n{txt_advanced}\nИ ты можешь использовать следующие команды бота:\n{txt_commands}')
+                txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать *Упомянуть*'
+    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s у тебя есть роли:\n{txt_role[:-2]}.\n\n__Тебе доступно:__\n{txt_txt_channels}\n{txt_voice_channels}\n{txt_advanced}\n\n__И ты можешь использовать следующие команды бота:__\n{txt_commands}')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
