@@ -135,7 +135,7 @@ async def access(ctx, *args, **kwargs):
     member = guild.get_member(ctx.message.author.id)
     await check_user(ctx)
     print(f'роль проверки{get_key(cf_role, 1)}')
-    print(ензу(get_key(cf_role, 1)))
+    print(type(get_key(cf_role, 1)))
     print(type(await get_user_roles(ctx)))
     print(f'все роли {await get_user_roles(ctx)}')
     if get_key(cf_role, 1) in await get_user_roles(ctx):
