@@ -48,8 +48,9 @@ async def new_user(member):
     task = random.choice(quests_id)
     date = datetime.now()
     user = ((member.id, member.name, task, 10, 0, date))
+    guild = bot.get_guild(guild_id)
     dbase.add_item('new_user', user)
-    await member.add_roles(get_key(cf_role, 4))
+    await member.add_roles(guild.get_role(get_key(cf_role, 0)))
 
 async def check_user(ctx):
     global dbase
