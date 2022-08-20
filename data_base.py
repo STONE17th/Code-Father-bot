@@ -41,7 +41,7 @@ class DataBase():
                 self.cur.execute(f'SELECT quest_id, task, answer FROM quest_list WHERE task = {args[0]}').fetchall()
             case 'task':
                 self.cur.execute(f'SELECT task FROM quest_list WHERE quest_id = {args[0]}').fetch()
-                return [elem for elem in self.cur][0]
+                return [elem[0] for elem in self.cur][0]
             case 'answer':
                 self.cur.execute(f'SELECT answer FROM quest_list WHERE quest_id = {args[0]}')
                 return [elem for elem in self.cur][0]
