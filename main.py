@@ -79,7 +79,7 @@ async def delete_message(ctx):
 @bot.command()
 async def info(ctx):
     # print(dir(ctx.guild.get_role))
-    mentions = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
+    member_mentions = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     role = utils.get(ctx.guild.roles, id=cf_role[4])
     print(mentions)
     print(mentions[0])
@@ -89,13 +89,14 @@ async def info(ctx):
     #         pass
     #     case 1:
     #         await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+    #         await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
     #     case 2:
     #         pass
     #     case 3:
     #         pass
     #     case 4:
     #         await ctx.author.send(f'{ctx.author.mention}, у вас статус admin и вы можете:\n/embed <Заголовок> <Текст сообщения> - Загловок из одного слова, текст сообщения - сколько угодно\n/set_task <пользователь> <номер задачи> - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать Упомянуть\n/status <пользователь> <должность> - выдать пользователю должность, упомянуть пользователя удобно правой кнопкой из должностей пока только admin и user')
-
+    await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
 
 @bot.command()
 async def status(ctx, stat_name: str, stat):
