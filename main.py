@@ -134,19 +134,11 @@ async def access(ctx, *args, **kwargs):
     guild = bot.get_guild(guild_id)
     member = guild.get_member(ctx.message.author.id)
     await check_user(ctx)
-    # print(type(get_key(cf_role, 1)))
-    # print(f'роль проверки {get_key(cf_role, 1)}')
-    # print(type((await get_user_roles(ctx))[0]))
-    # print(f'все роли {(await get_user_roles(ctx))[0]}')
     if get_key(cf_role, 1) == await get_user_roles(ctx):
         await ctx.send(f"У вас уже есть такая роль")
     else:
         user_task = dbase.get_user('task', str(ctx.author.id))
-        print(user_task[0])
-        print(type(user_task[0]))
         user_quest = dbase.get_quest('task', int(user_task[0]))
-        print(user_task)
-        print(user_quest)
         await ctx.send(f'{ctx.author.mention}, {task_string}{user_quest[0]}{answer_string}')
 
 @bot.command()
@@ -155,7 +147,7 @@ async def answer(ctx, *args, **kwargs):
     await check_user(ctx)
     if not args == ():
         guild = bot.get_guild(guild_id)
-        role = guild.get_role(cf_role[1])
+        role = guild.get_role(get_key(cf_role,1))
         member = guild.get_member(ctx.message.author.id)
         task_id = dbase.get_user('task', ctx.author.id)
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
