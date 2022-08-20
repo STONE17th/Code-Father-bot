@@ -79,8 +79,9 @@ async def delete_message(ctx):
 @bot.command()
 async def info(ctx):
     # print(dir(ctx.guild.get_role))
+    mentions = [role.mention for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles if role.mentionable]
     role = utils.get(ctx.guild.roles, id=cf_role[4])
-    print(type(role))
+    print(mentions)
     # status = await get_user_status(ctx)
     # match status:
     #     case 0:
