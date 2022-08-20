@@ -27,6 +27,9 @@ class DataBase():
             case 'status':
                 self.cur.execute(f'SELECT status FROM user_list WHERE dis_id = {args[0]}')
                 return [elem[0] for elem in self.cur]
+            case 'date':
+                self.cur.execute(f'SELECT date_reg FROM user_list WHERE dis_id = {args[0]}')
+                return [elem[0] for elem in self.cur]
 
 
     def get_quest(self, list_select: str, *args):

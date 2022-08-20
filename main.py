@@ -82,6 +82,8 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
+    global dbase
+    user_date = dbase.get_user('date', ctx.author.id)
     guild = bot.get_guild(guild_id)
     roles = []
     [roles.append(guild.get_role(x).name) for x in await get_user_roles(ctx)]
@@ -112,7 +114,7 @@ async def info(ctx):
                 txt_advanced += ', выдавать и снимать роли, участвовать в совещании штаба CF '
                 txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
                 txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать *Упомянуть*'
-    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s у тебя есть роли:\n{txt_role[:-2]}.\n\n**Тебе доступно:**\n{txt_txt_channels}\n{txt_voice_channels}\n{txt_advanced}\n\n**И ты можешь использовать следующие команды бота:**\n{txt_commands}')
+    await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s ты провел {datetime.now() - user_date}\nУ тебя есть роли:\n{txt_role[:-2]}.\n\n**Тебе доступно:**\n{txt_txt_channels}\n{txt_voice_channels}\n{txt_advanced}\n\n**И ты можешь использовать следующие команды бота:**\n{txt_commands}')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
