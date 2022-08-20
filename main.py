@@ -82,10 +82,15 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
+    guild = bot.get_guild(guild_id)
+    role = guild.get_role(get_key(cf_role, 1))
+    roles = []
+    [roles.append(guild.get_role(x)) for x in await get_user_roles(ctx)]
+    print(roles)
     for role in await get_user_roles(ctx):
         match cf_role.get(role):
             case 0:
-                await ctx.author.send(f'{ctx.author.mention}, для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
+                await ctx.author.send(f'для получения роли первого уровня (доступ к голосовому каналу и дополнительным материалам) отправьте боту команду /access')
             case 1:
                 pass
             case 2:
@@ -140,11 +145,8 @@ async def answer(ctx, *args, **kwargs):
     await check_user(ctx)
     if not args == ():
         guild = bot.get_guild(guild_id)
-        print(guild)
         role = guild.get_role(get_key(cf_role,1))
-        print(role)
         member = guild.get_member(ctx.message.author.id)
-        print(member)
         task_id = dbase.get_user('task', ctx.author.id)
         if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
             await delete_message(ctx)
