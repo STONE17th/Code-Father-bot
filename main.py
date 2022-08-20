@@ -77,7 +77,7 @@ async def delete_message(ctx):
 
 @bot.command()
 async def info(ctx):
-    print(dir(ctx))
+    print(dir(ctx.guild.role))
     # status = await get_user_status(ctx)
     # match status:
     #     case 0:
