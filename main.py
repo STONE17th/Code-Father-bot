@@ -1,12 +1,12 @@
-from discord import utils
+import os
 from datetime import datetime
 import asyncio
 import random
-import discord
 import mysql.connector
-from discord.ext import commands
-import os
 import data_base
+import discord
+from discord.ext import commands
+
 
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
@@ -38,7 +38,8 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    embed=discord.Embed(title="Добро пожаловать!", description=f'Эй, народ! Зацените! Кто это тут к нам залетел :)\n\nПривет, {member.mention}. Я бот канала CODE Father\'s. Пока я мало чего умею, но всё впереди...\n\nЗагляни в ЛС, я там тебе кое-чего прислал', color=0xCC974F)
+    guild = bot.get_guild(guild_id)
+    embed=discord.Embed(title="Добро пожаловать!", description=f'Эй, народ! Нас теперь {guild.member_count} :)\n\nПривет, {member.mention}. Я бот канала CODE Father\'s. Пока я мало чего умею, но всё впереди...\n\nЗагляни в ЛС, я там тебе кое-чего прислал', color=0xCC974F)
     await bot.get_channel(start_channel).send(embed=embed)
     await member.send(f'Привет, {member.name}! Рады приветствовать тебя на нашем сервере. Чем мы здесь занимаемся?\nМы создаем дружное коммьюнити из единомышленников в IT сфере. Здесь ты сможешь получить помощь с ДЗ, получить консультацию по текущим темам от однокурсников, пообщаться в прямом эфире с крутыми гостями, которые уже работают в IT, обменяться опытом, найти команду для реализации своих идей, да и просто пообщаться :)\nЕсли возникнут вопросы, то пиши кому-нибудь из администараторов и тебе обязательно ответят\n\nНо для начала было бы неплохо получить роль первого уровня (для доступа к голосовому чату и архиву с полезными ссылками)\nДля этого просто введи на канале /access и мы с тобой всё сделаем!\n\nПриятных тебе минут на сервере и удачного обучения!\n\nP.S. Если увидишь Джонна Конора - передай привет')
     await new_user(member)
@@ -83,6 +84,7 @@ async def delete_message(ctx):
 @bot.command()
 async def info(ctx):
     global dbase
+    await check_user(ctx)
     user_date = dbase.get_user('date', ctx.author.id)
     guild = bot.get_guild(guild_id)
     roles = []
@@ -112,33 +114,56 @@ async def info(ctx):
                 txt_txt_channels += ', **Штаб**'
                 txt_voice_channels += ', **Штаб**'
                 txt_advanced += ', выдавать и снимать роли, участвовать в совещании штаба CF '
-                txt_commands += '**/embed** *<Заголовок> <Текст сообщения>* - Загловок из одного слова, текст сообщения - сколько угодно\n'
+                txt_commands += '**/embed** *<Цвет> <Заголовок> <Текст сообщения>* - цвет в HEX формате, если в заголовке больше одного слова, то обязательно в двойных кавычках, текст сообщения - сколько угодно\n'
+                txt_commands += '**/poll** *<Цвет> <Вопрос> <Варианты ответов>* - цвет в HEX формате, если в вопросе больше одного слова, то обязательно в двойных кавычках, варианты ответов одним словом\n'
                 txt_commands += '**/set_task** *<пользователь> <номер задачи>* - выдать пользователю новую задачу, пользователя можно задать кликнув по нему правой кнопкой и выбрать *Упомянуть*'
     await ctx.author.send(f'{(ctx.author.mention)}, на сервере CODE Father\'s ты провел {str(datetime.now() - user_date[0])[:-7]}\nУ тебя есть роли:\n{txt_role[:-2]}.\n\n**Тебе доступно:**\n{txt_txt_channels}\n{txt_voice_channels}\n{txt_advanced}\n\n**И ты можешь использовать следующие команды бота:**\n{txt_commands}')
 
 @bot.command()
 async def set_task(ctx, stat_name: str, stat):
     global dbase
+    await check_user(ctx)
     if get_key(cf_role, 4) in await get_user_roles(ctx):
-        print('Можно')
         dbase.update_item('set_task', stat_name[2:-1], stat)
         await ctx.send(
             f'У пользователя {stat_name} теперь {stat} задача')
     else:
-        print('Нельзя')
         await ctx.send(f'Эта команда для тебя недоступна')
 
 @bot.command()
-async def embed(ctx, title, *args):
-    global dbase
-    text = ''
-    for word in args:
-        text += word + ' '
+async def embed(ctx, color, title, *args):
+    global dbase, embed
+    await check_user(ctx)
     if get_key(cf_role, 4) in await get_user_roles(ctx):
-        embed = discord.Embed(color=0xff9900, title=f'{title}', description=f'{text}')
+        text = ''
+        for word in args:
+            text += f'{word} '
+        await check_user(ctx)
+        col = int(str(color).replace('#', ''), 16)
+        embed = discord.Embed(color=col, title=title, description=f'{text}')
         await ctx.send(embed=embed)
+        await delete_message(ctx)
     else:
-        await ctx.send(f'Эта команда для тебя недоступна')
+        await ctx.send(f"У тебя нет доступа к этой команде")
+
+@bot.command(aliases = ["голосование", "голос"])
+async def poll(ctx, color, question, *args):
+    await check_user(ctx)
+    if get_key(cf_role, 4) in await get_user_roles(ctx):
+        numbers = []
+        [numbers.append(f'{i}\uFE0F\u20E3') for i in range(1, 11)]
+        if len(args) <= 10:
+            col = int(str(color).replace('#', ''), 16)
+            embed = discord.Embed(title="Голосование", description=question, color=col)
+            fields = [("Варианты:", "\n".join([f'{numbers[idx]} - {option}' for idx, option in enumerate(args)]), True)]
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+            message = await ctx.send(embed=embed)
+            for emoji in numbers[:len(args)]:
+                await message.add_reaction(emoji)
+        await delete_message(ctx)
+    else:
+        await ctx.send(f"У тебя нет доступа к этой команде")
 
 
 @bot.command()
@@ -188,5 +213,5 @@ async def game_info():
         await bot.change_presence(activity=discord.Game('/info'))
         await asyncio.sleep(15)
 
-bot.loop.create_task(game_info())
+# bot.loop.create_task(game_info())
 bot.run(os.getenv('TOKEN'))
