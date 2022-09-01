@@ -309,5 +309,5 @@ async def game_info():
         await bot.change_presence(activity=discord.Game('/info'))
         await asyncio.sleep(15)
 
-# bot.loop.create_task(game_info())
+bot.loop.create_task(game_info())
 bot.run('TOKEN')
