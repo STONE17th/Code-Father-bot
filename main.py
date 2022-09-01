@@ -33,7 +33,7 @@ async def db_connection():
     global dbase
     try:
         dbase = data_base.DataBase(
-            mysql.connector.connect(user='root', db='cf_bot', passwd='CodeFather17', host='glt.ekolenko.ru'))
+            mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
         return dbase
     except:
         print('DB Connected... failed')
@@ -310,4 +310,4 @@ async def game_info():
         await asyncio.sleep(15)
 
 # bot.loop.create_task(game_info())
-bot.run('MTAxMDY5NTY1NTIyNTgxOTE3Ng.GzQvfF.QsGmjIzA6GlNva86xspruMg_eZMVQQuIkYemiM')
+bot.run('TOKEN')
