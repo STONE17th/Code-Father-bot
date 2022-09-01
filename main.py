@@ -310,4 +310,4 @@ async def game_info():
         await asyncio.sleep(15)
 
 bot.loop.create_task(game_info())
-bot.run('TOKEN')
+bot.run(os.getenv('TOKEN'))
