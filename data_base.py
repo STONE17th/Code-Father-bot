@@ -30,9 +30,12 @@ class DataBase():
             case 'date':
                 self.cur.execute(f'SELECT date_reg FROM user_list WHERE dis_id = {args[0]}')
                 return [elem[0] for elem in self.cur]
+            case 'family':
+                self.cur.execute(f'SELECT family FROM user_list WHERE dis_id = {args[0]}')
+                return [elem[0] for elem in self.cur]
 
 
-    def get_quest(self, list_select: str, *args):
+    def get_quest(self, list_select: str, language: str, number: int, *args):
         match list_select:
             case 'all':
                 self.cur.execute(f'SELECT * FROM quest_list')
@@ -43,10 +46,10 @@ class DataBase():
             case 'quest':
                 self.cur.execute(f'SELECT quest_id, task, answer FROM quest_list WHERE task = {args[0]}').fetchall()
             case 'task':
-                self.cur.execute(f'SELECT task FROM quest_list WHERE quest_id = {args[0]}')
+                self.cur.execute(f'SELECT {language} FROM quest_list WHERE quest_id = {number}')
                 return [elem[0] for elem in self.cur]
             case 'answer':
-                self.cur.execute(f'SELECT answer FROM quest_list WHERE quest_id = {args[0]}')
+                self.cur.execute(f'SELECT {language}1 FROM quest_list WHERE quest_id = {number}')
                 return [elem for elem in self.cur][0]
 
     def add_item(self, list_select: str, new_item):
@@ -57,10 +60,14 @@ class DataBase():
                 self.cur.execute(f'INSERT INTO quest_list (task, answer) VALUES (%s, %s)', new_item)
         self.base.commit()
 
-    def update_item(self, list_select: str, id, num):
+    def update_item(self, list_select: str, id, task):
         match list_select:
             case 'set_task':
-                self.cur.execute(f'UPDATE user_list SET task = %s WHERE dis_id = %s', (num, id))
+                self.cur.execute(f'UPDATE user_list SET task = (%s) WHERE dis_id = (%s)', (task, id))
+                self.base.commit()
+            case 'set_family':
+                self.cur.execute(f'UPDATE user_list SET family = (%s) WHERE dis_id = (%s)', (task, id))
+                self.base.commit()
 
     def delete_item(self, id, list_select: str):
         match list_select:

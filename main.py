@@ -12,11 +12,15 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
 # dbase = quests = quests_id = None
 
-cf_role = {1010186572156641290 : 0,
+admin = 669628282756530207
+
+cf_role = {996841246016417962 : -1,
+           1010186572156641290 : 0,
            1000730137731551382 : 1,
            1009910414961811486 : 2,
            1009928506966290442 : 3,
            1001397006993985646 : 4}
+
 vpb_role = 1008289239210938518
 guild_id = 996841246016417962
 start_channel = 1006321073958166548
@@ -25,16 +29,27 @@ status = '/info'
 task_string = f'что выведет в *консоль* этот код:\n'
 answer_string = f'\n\nОтвет отправляй так: **/answer** *<твой вариант ответа>*'
 
+async def db_connection():
+    global dbase
+    try:
+        dbase = data_base.DataBase(
+            mysql.connector.connect(user='root', db='cf_bot', passwd='CodeFather17', host='glt.ekolenko.ru'))
+        return dbase
+    except:
+        print('DB Connected... failed')
+        await send_message_to_admin("База данных отвалилась")
+
+
 @bot.event
 async def on_ready():
-    global dbase, quests, quests_id
+    global quests, quests_id, dbase
     print('On start')
-    dbase = data_base.DataBase(
-        mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
+    dbase = await db_connection()
     if dbase:
         print('DB Connected... OK')
-        quests = dbase.get_quest('all')
-        quests_id = dbase.get_quest('id')
+        quests = dbase.get_quest('all', '', 0)
+        quests_id = dbase.get_quest('id', '', 0)
+
 
 @bot.event
 async def on_member_join(member):
@@ -42,16 +57,15 @@ async def on_member_join(member):
     embed=discord.Embed(title="Добро пожаловать!", description=f'Эй, народ! Нас теперь {guild.member_count} :)\n\nПривет, {member.mention}. Я бот канала CODE Father\'s. Пока я мало чего умею, но всё впереди...\n\nЗагляни в ЛС, я там тебе кое-чего прислал', color=0xCC974F)
     await bot.get_channel(start_channel).send(embed=embed)
     await member.send(f'Привет, {member.name}! Рады приветствовать тебя на нашем сервере. Чем мы здесь занимаемся?\nМы создаем дружное коммьюнити из единомышленников в IT сфере. Здесь ты сможешь получить помощь с ДЗ, получить консультацию по текущим темам от однокурсников, пообщаться в прямом эфире с крутыми гостями, которые уже работают в IT, обменяться опытом, найти команду для реализации своих идей, да и просто пообщаться :)\nЕсли возникнут вопросы, то пиши кому-нибудь из администараторов и тебе обязательно ответят\n\nНо для начала было бы неплохо получить роль первого уровня (для доступа к голосовому чату и архиву с полезными ссылками)\nДля этого просто введи на канале /access и мы с тобой всё сделаем!\n\nПриятных тебе минут на сервере и удачного обучения!\n\nP.S. Если увидишь Джонна Конора - передай привет')
+    await send_message_to_admin(f'У нас новый участник - {member.name}!')
     await new_user(member)
 
 async def new_user(member):
-    global quests_id
-    task = random.choice(quests_id)
     date = datetime.now()
     user = ((member.id, member.name, task, 10, 0, date))
-    guild = bot.get_guild(guild_id)
+    dbase = await db_connection()
     dbase.add_item('new_user', user)
-    await member.add_roles(guild.get_role(get_key(cf_role, 0)))
+
 
 async def check_user(ctx):
     global dbase
@@ -60,17 +74,32 @@ async def check_user(ctx):
     if not user: await new_user(ctx.author)
     return True
 
+async def check_member(member):
+    global dbase
+    try:
+        user = dbase.get_user('user', member.id)
+        if not user: await new_user(member)
+    except:
+        await member.send(f'{member.mention}, твой никнейм содержит недопустимые символы. Измени никнейм, иначе мы не сможем внести тебя в БД')
+    return True
+
 @bot.event
 async def on_member_remove(member):
+    global dbase
     dbase.delete_item(member.id, 'user_list')
+    await send_message_to_admin(f'Нас покинул {member.name}!')
 
 def get_key(dict, value):
     for k, v in dict.items():
         if v == value:
             return k
 
+async def send_message_to_admin(text):
+    guild = bot.get_guild(guild_id)
+    member = guild.get_member(admin)
+    await member.send(text)
+
 async def get_user_roles(ctx):
-    global dbase
     member_roles = [role.id for role in bot.get_guild(guild_id).get_member(ctx.message.author.id).roles]
     await delete_message(ctx)
     return member_roles
@@ -79,7 +108,7 @@ async def delete_message(ctx):
     try:
         await ctx.message.delete()
     except:
-        print('Ошибка')
+        pass
 
 @bot.command()
 async def info(ctx):
@@ -90,7 +119,7 @@ async def info(ctx):
     roles = []
     [roles.append(guild.get_role(x).name) for x in await get_user_roles(ctx)]
     txt_role = ''
-    txt_txt_channels = 'Текстовые каналы **Прихожая**, **Важная информация**, **Флудильня**'
+    txt_txt_channels = 'Текстовые каналы **Прихожая**, **Манифест**, **Важная информация**, **Флудильня**'
     txt_voice_channels = 'Голосовые каналы **Переговорная**'
     txt_advanced = ''
     txt_commands = '**/info** - помощь по боту канала CODE Father\'s\n'
@@ -98,12 +127,14 @@ async def info(ctx):
         txt_role += f'{role}, '
     for role in await get_user_roles(ctx):
         match cf_role.get(role):
+            case -1:
+                txt_commands += '**/access** - для принятия правил(манифеста) сервера и получения серой роли\n'
             case 0:
-                txt_commands += '**/access** - для получения доступа первого уровня\n'
+                txt_commands += '**/task** *<выбор языка>* - для получения зеленой роли путем решения задачи на выбранном языке\n'
                 txt_commands += '**/answer** *<твой ответ>* - для отправки ответа на полученную задачу *(**Важно!** Ответы False и false - разные вещи. Вводи именно так, как требует задача.)*\n'
             case 1:
-                txt_txt_channels += ', **Полезные ссылки**, **Документация Python**, **Podcasts**, **Вопросы для гостя**'
-                txt_voice_channels += ', **Аудитория CF**, **Podcast**'
+                txt_txt_channels += ', **Полезные ссылки**, **Документация**, **Podcasts**, **Вопросы для гостя**'
+                txt_voice_channels += ', **Кабинеты языков**, **Podcast**'
                 pass
             case 2:
                 txt_advanced += 'Создавать свою **Семью** и получаешь доступ к текстовому и голосовму каналу своей семьи '
@@ -131,8 +162,32 @@ async def set_task(ctx, stat_name: str, stat):
         await ctx.send(f'Эта команда для тебя недоступна')
 
 @bot.command()
+async def family(ctx, *args):
+    global dbase
+    await check_user(ctx)
+    if get_key(cf_role, 4) in await get_user_roles(ctx):
+        dbase.update_item('set_family', args[0][2:-1], args[1])
+        guild = bot.get_guild(guild_id)
+        role = guild.get_role(int(args[1]))
+        role2 = guild.get_role(int(get_key(cf_role, 4)))
+        member = guild.get_member(int(str(args[0])[2:-1]))
+        await member.add_roles(role)
+        await member.add_roles(role2)
+        await ctx.send(
+            f'Поздравляю, {member}! Теперь ты глава семьи {role}!')
+    elif int(dbase.get_user('family', ctx.author.id)[0]) in await get_user_roles(ctx):
+        guild = bot.get_guild(guild_id)
+        role = guild.get_role(int(dbase.get_user('family', ctx.author.id)[0]))
+        member = guild.get_member(int(str(args[0])[2:-1]))
+        await member.add_roles(role)
+        await ctx.send(
+            f'Поздравляю, {member}! Теперь ты в семье {role}!')
+    else:
+        await ctx.send(f'Эта команда для тебя недоступна')
+
+@bot.command()
 async def embed(ctx, color, title, *args):
-    global dbase, embed
+    global dbase
     await check_user(ctx)
     if get_key(cf_role, 4) in await get_user_roles(ctx):
         text = ''
@@ -148,6 +203,7 @@ async def embed(ctx, color, title, *args):
 
 @bot.command(aliases = ["голосование", "голос"])
 async def poll(ctx, color, question, *args):
+    global dbase
     await check_user(ctx)
     if get_key(cf_role, 4) in await get_user_roles(ctx):
         numbers = []
@@ -167,27 +223,77 @@ async def poll(ctx, color, question, *args):
 
 
 @bot.command()
+async def add_all_user_to_db(ctx, *args, **kwargs):
+    guild = bot.get_guild(guild_id)
+    members = guild.members
+    for each in members:
+        await check_member(each)
+
+@bot.command()
+async def clear_all_users_role(ctx, *args, **kwargs):
+    global dbase
+    await delete_message(ctx)
+    if get_key(cf_role, 4) in await get_user_roles(ctx):
+        guild = bot.get_guild(guild_id)
+        role = guild.get_role(get_key(cf_role, int(args[0])))
+        members = guild.members
+        for each in members:
+            if role in each.roles:
+                await each.remove_roles(role)
+    else: await ctx.send(f'{ctx.author.mention}, у тебя нет прав для использования этой команды')
+
+
+@bot.command()
 async def access(ctx, *args, **kwargs):
-    global dbase, cf_role
+    global dbase
     await check_user(ctx)
-    if get_key(cf_role, 1) in await get_user_roles(ctx):
-        await ctx.send(f"У тебя уже есть эта роль")
+    if get_key(cf_role, 0) in await get_user_roles(ctx):
+        await ctx.send(f'{ctx.author.mention}, ты уже принял правила сервера. Для помощи по командам бота используй **/info**')
     else:
-        user_task = dbase.get_user('task', str(ctx.author.id))
-        user_quest = dbase.get_quest('task', int(user_task[0]))
-        await ctx.send(f'{ctx.author.mention}, {task_string}{user_quest[0]}{answer_string}')
+        guild = bot.get_guild(guild_id)
+        npc_role = guild.get_role(get_key(cf_role, 0))
+        member = guild.get_member(ctx.message.author.id)
+        await member.add_roles(npc_role)
+        await ctx.send(
+            f'{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой **/info** можешь узнать свои новые возможности')
+
+
+@bot.command()
+async def task(ctx, *args, **kwargs):
+    global dbase
+    dbase = await db_connection()
+    await check_user(ctx)
+    if args == ():
+        user_task = dbase.get_user('task', ctx.author.id)
+        if not user_task[0] == str(0):
+            user_quest = dbase.get_quest('task', user_task[0][0], int(user_task[0][1]))
+            await ctx.send(f'{ctx.author.mention}, {task_string}{user_quest[0]}{answer_string}')
+        else:
+            await ctx.send(f'{ctx.author.mention}, для начала тебе нужно взять задачу при помощи команды **/task** *<язык>*, языки p - Python, j - Java, c - C#')
+    else:
+        if get_key(cf_role, 1) in await get_user_roles(ctx):
+            await ctx.send(f'{ctx.author.mention}, у тебя уже есть роль первого уровня. Для помощи по командам бота используй **/info**')
+        elif args[0] not in ('p', 'j' ,'c'):
+            await ctx.send(f'{ctx.author.mention}, введи язык корректно.  p - Python, j - Java, c - C#')
+        else:
+            letter = args[0]
+            number = random.choice(quests_id)
+            dbase.update_item('set_task', ctx.author.id, str(letter) + str(number))
+            user_quest = dbase.get_quest('task', letter, int(number))
+            await ctx.send(f'{ctx.author.mention}, {task_string}{user_quest[0]}{answer_string}')
 
 @bot.command()
 async def answer(ctx, *args, **kwargs):
-    global dbase, quest_answers, simple_role
+    global dbase, quest_answers
+    dbase = await db_connection()
     await check_user(ctx)
     if not args == ():
         guild = bot.get_guild(guild_id)
         new_role = guild.get_role(get_key(cf_role,1))
         old_role = guild.get_role(get_key(cf_role,0))
         member = guild.get_member(ctx.message.author.id)
-        task_id = dbase.get_user('task', ctx.author.id)
-        if str(args[0]) == str(dbase.get_quest('answer', task_id[0])[0]):
+        task = dbase.get_user('task', ctx.author.id)
+        if str(args[0]) == str(dbase.get_quest('answer', task[0][0], task[0][1])[0]):
             await delete_message(ctx)
             await member.add_roles(new_role)
             await ctx.send(f"{ctx.author.mention}, поздравляем! Теперь у тебя роль первого уровня! Командой **/info** можете узнать свои новые возможности")
@@ -195,16 +301,6 @@ async def answer(ctx, *args, **kwargs):
         else:
             await delete_message(ctx)
             await ctx.send(f'{ctx.author.mention}, ну чего-то ты не то написал. Разберись для начала с этим, а потом уже роль')
-
-@bot.command()
-async def adduser(ctx, user_id):
-    await delete_message(ctx)
-    if ctx.author.id == 1004464010189623296 or ctx.author.id == 669628282756530207:
-        guild = bot.get_guild(guild_id)
-        role = guild.get_role(vpb_role)
-        member = guild.get_member(int(user_id[2:-1]))
-        await member.add_roles(role)
-        await ctx.send(f"Пользователь {user_id}, получил роль {role}!")
 
 async def game_info():
     global status
@@ -214,4 +310,4 @@ async def game_info():
         await asyncio.sleep(15)
 
 # bot.loop.create_task(game_info())
-bot.run(os.getenv('TOKEN'))
+bot.run('MTAxMDY5NTY1NTIyNTgxOTE3Ng.GzQvfF.QsGmjIzA6GlNva86xspruMg_eZMVQQuIkYemiM')
