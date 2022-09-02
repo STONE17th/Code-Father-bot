@@ -61,8 +61,9 @@ async def on_member_join(member):
     await new_user(member)
 
 async def new_user(member):
+    global quests_id
     date = datetime.now()
-    user = ((member.id, member.name, task, 10, 0, date))
+    user = ((member.id, member.name, 0, 10, 0, date))
     dbase = await db_connection()
     dbase.add_item('new_user', user)
 
