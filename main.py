@@ -29,7 +29,7 @@ status = '/info'
 task_string = f'что выведет в *консоль* этот код:\n'
 answer_string = f'\n\nОтвет отправляй так: **/answer** *<твой вариант ответа>*'
 
-adv_timer = 10800
+adv_timer = 0
 adv_title = 'На правах рекламы'
 adv_text = f'Не дадим технологиям захватить мир! Машины должны батрачить на людей, а не наоборот. Вступай в ряды ' \
            f'ботоводов ✊\nКурсы по телеграм-ботоводству на базе библиотеки AIOgram языка Python\nЗа подробностями в ' \
@@ -40,7 +40,7 @@ async def db_connection():
     global dbase
     try:
         dbase = data_base.DataBase(
-            mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
+            mysql.connector.connect(user='root', db='cf_bot', passwd='CodeFather17', host='glt.ekolenko.ru'))
         print('DB Connected... OK!')
         return dbase
     except:
@@ -53,7 +53,6 @@ async def on_ready():
     global quests, quests_id, dbase
     print('On start')
     dbase = await db_connection()
-    await adverstiment()
     if dbase:
         print('DB Connected... OK')
         quests = dbase.get_quest('all', '', 0)
@@ -82,9 +81,15 @@ async def on_member_join(member):
     await send_message_to_admin(f'У нас новый участник - {member.name}!')
     await new_user(member)
 
-
-async def adverstiment():
-    while (True):
+@bot.command(aliases=['реклама'])
+async def adverstiment(ctx, time: int):
+    global dbase, adv_timer
+    await check_user(ctx)
+    if get_key(cf_role, 4) in await get_user_roles(ctx):
+        adv_timer = time
+    else:
+        await ctx.send(f'Эта команда для тебя недоступна')
+    while (adv_timer):
         guild = bot.get_guild(guild_id)
         member = guild.get_member(admin)
         atext = adv_text + f'{member.mention}'
@@ -332,6 +337,24 @@ async def delete_message(ctx):
     except:
         pass
 
+@bot.command()
+async def mailing(ctx, *args):
+    global dbase
+    await check_user(ctx)
+    if get_key(cf_role, 4) in await get_user_roles(ctx):
+        users = dbase.get_user('user_id', "*")
+        text = ''
+        for word in args:
+            text += f'{word} '
+        for user in users:
+            guild = bot.get_guild(guild_id)
+            member = guild.get_member(int(user[0]))
+            await member.send(text)
+    else:
+        await ctx.send(f'Эта команда для тебя недоступна')
+
+
+
 
 @bot.command()
 async def info(ctx):
@@ -548,4 +571,4 @@ async def game_info():
 
 
 # bot.loop.create_task(game_info())
-bot.run(os.getenv('TOKEN'))
+bot.run('MTAxMDY5NTY1NTIyNTgxOTE3Ng.GITVkS.owkrA4OPIk8OkI5Bw_oU0w4o1qn-ly6Z0qdt4Q')

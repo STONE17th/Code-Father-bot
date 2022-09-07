@@ -18,6 +18,9 @@ class DataBase():
 
     def get_user(self, list_select: str, *args):
         match list_select:
+            case 'user_id':
+                self.cur.execute(f'SELECT dis_id FROM user_list')
+                return [tuple(elem) for elem in self.cur]
             case 'user':
                 self.cur.execute(f'SELECT dis_id, name, task FROM user_list WHERE dis_id = {args[0]}')
                 return [tuple(elem) for elem in self.cur]
