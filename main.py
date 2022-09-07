@@ -40,7 +40,7 @@ async def db_connection():
     global dbase
     try:
         dbase = data_base.DataBase(
-            mysql.connector.connect(user='root', db='cf_bot', passwd='CodeFather17', host='glt.ekolenko.ru'))
+            mysql.connector.connect(user='root', db='cf_bot', passwd=os.getenv('MYSQL_PWD'), host='mysql'))
         print('DB Connected... OK!')
         return dbase
     except:
@@ -571,4 +571,4 @@ async def game_info():
 
 
 # bot.loop.create_task(game_info())
-bot.run('MTAxMDY5NTY1NTIyNTgxOTE3Ng.GITVkS.owkrA4OPIk8OkI5Bw_oU0w4o1qn-ly6Z0qdt4Q')
+bot.run(os.getenv('TOKEN'))
