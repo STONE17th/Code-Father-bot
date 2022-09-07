@@ -342,7 +342,7 @@ async def mailing(ctx, *args):
     global dbase
     await check_user(ctx)
     if get_key(cf_role, 4) in await get_user_roles(ctx):
-        users = dbase.get_user('user_id', "*")
+        users = dbase.get_user('user_id')
         text = ''
         for word in args:
             text += f'{word} '
