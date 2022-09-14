@@ -9,7 +9,7 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
-# dbase = quests = quests_id = None
+dbase = quests = quests_id = None
 
 admin = 669628282756530207
 
@@ -385,7 +385,6 @@ async def info(ctx):
             case 2:
                 txt_advanced += 'Создавать свою **Семью** и получаешь доступ к текстовому и голосовму каналу своей семьи '
             case 3:
-                print('Третий')
                 pass
             case 4:
                 txt_txt_channels += ', **Штаб**'
